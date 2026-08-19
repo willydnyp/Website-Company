@@ -16,6 +16,18 @@ function clean($koneksi, $str) {
     return mysqli_real_escape_string($koneksi, trim(htmlspecialchars($str ?? '')));
 }
 
+// Untuk konten kaya teks (hasil editor bold/italic/list, dsb) - simpan sebagai HTML
+// yang sudah difilter, bukan di-escape penuh seperti clean().
+function cleanRichText($koneksi, $html) {
+    $html = trim($html ?? '');
+    $tagDiizinkan = '<p><br><b><strong><i><em><u><s><strike><ul><ol><li><a><h2><h3><blockquote><span>';
+    $html = strip_tags($html, $tagDiizinkan);
+    $html = preg_replace('/\son\w+\s*=\s*"[^"]*"/i', '', $html);
+    $html = preg_replace("/\son\w+\s*=\s*'[^']*'/i", '', $html);
+    $html = preg_replace('/(href|src)\s*=\s*"\s*javascript:[^"]*"/i', '$1="#"', $html);
+    return mysqli_real_escape_string($koneksi, $html);
+}
+
 function getProfil() {
     require __DIR__ . '/konfigurasi.php';
     return $profil;

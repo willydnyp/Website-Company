@@ -4,9 +4,9 @@ require_once '../includes/functions.php';
 requireLogin();
 
 $tab = $_GET['tab'] ?? 'profil';
-if (!in_array($tab, ['profil','pesan','users','pengaturan'])) $tab = 'profil';
+if (!in_array($tab, ['profil','pesan','users'])) $tab = 'profil';
 $active_menu = $tab;
-$judulTab = ['profil'=>'Profil Universitas','pesan'=>'Pesan Masuk','users'=>'Pengguna/Admin','pengaturan'=>'Pengaturan Website'];
+$judulTab = ['profil'=>'Profil Universitas','pesan'=>'Pesan Masuk','users'=>'Pengguna/Admin'];
 $page_title = $judulTab[$tab];
 
 $profil = getProfil();
@@ -43,6 +43,21 @@ if ($tab == 'users') {
         else header('Location: settings.php?tab=users&error=Tidak+bisa+hapus+akun+sendiri');
         exit;
     }
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['ubah_password'])) {
+        $user = mysqli_fetch_assoc(mysqli_query($koneksi, "SELECT * FROM users WHERE id=" . (int)$_SESSION['admin_id']));
+        if (password_verify($_POST['password_lama'], $user['password'])) {
+            if ($_POST['password_baru'] === $_POST['konfirmasi_password']) {
+                $hash = password_hash($_POST['password_baru'], PASSWORD_DEFAULT);
+                mysqli_query($koneksi, "UPDATE users SET password='$hash' WHERE id=" . (int)$_SESSION['admin_id']);
+                header('Location: settings.php?tab=users&success=Password+berhasil+diubah');
+            } else {
+                header('Location: settings.php?tab=users&error=Konfirmasi+password+tidak+cocok');
+            }
+        } else {
+            header('Location: settings.php?tab=users&error=Password+lama+salah');
+        }
+        exit;
+    }
     if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['username'])) {
         $username = clean($koneksi, $_POST['username']);
         $nama = clean($koneksi, $_POST['nama']);
@@ -63,28 +78,11 @@ if ($tab == 'users') {
     $dataUsers = mysqli_query($koneksi, "SELECT * FROM users ORDER BY id ASC");
 }
 
-if ($tab == 'pengaturan' && $_SERVER['REQUEST_METHOD'] === 'POST') {
-    $user = mysqli_fetch_assoc(mysqli_query($koneksi, "SELECT * FROM users WHERE id=" . (int)$_SESSION['admin_id']));
-    if (password_verify($_POST['password_lama'], $user['password'])) {
-        if ($_POST['password_baru'] === $_POST['konfirmasi_password']) {
-            $hash = password_hash($_POST['password_baru'], PASSWORD_DEFAULT);
-            mysqli_query($koneksi, "UPDATE users SET password='$hash' WHERE id=" . (int)$_SESSION['admin_id']);
-            header('Location: settings.php?tab=pengaturan&success=Password+berhasil+diubah');
-        } else {
-            header('Location: settings.php?tab=pengaturan&error=Konfirmasi+password+tidak+cocok');
-        }
-    } else {
-        header('Location: settings.php?tab=pengaturan&error=Password+lama+salah');
-    }
-    exit;
-}
-
 include 'includes/layout.php';
 ?>
 
 <?php if ($tab == 'profil'): ?>
 <div class="card dash-card p-4">
-  <p class="text-muted small mb-3"><i class="fa-solid fa-circle-info me-1"></i> Perubahan di halaman ini disimpan ke <code>includes/konfigurasi.php</code>.</p>
   <form method="POST">
     <div class="row g-3">
       <div class="col-md-6"><label class="form-label">Nama Universitas</label><input type="text" name="nama_universitas" class="form-control" value="<?= htmlspecialchars($profil['nama_universitas']) ?>" required></div>
@@ -165,6 +163,19 @@ include 'includes/layout.php';
   </div>
 </div>
 
+<div class="card dash-card p-4 mt-4">
+  <h6 class="fw-bold mb-3"><i class="fa-solid fa-lock me-1"></i> Ubah Password Saya</h6>
+  <form method="POST">
+    <input type="hidden" name="ubah_password" value="1">
+    <div class="row g-3">
+      <div class="col-md-4"><label class="form-label">Password Lama</label><input type="password" name="password_lama" class="form-control" required></div>
+      <div class="col-md-4"><label class="form-label">Password Baru</label><input type="password" name="password_baru" class="form-control" required minlength="6"></div>
+      <div class="col-md-4"><label class="form-label">Konfirmasi Password</label><input type="password" name="konfirmasi_password" class="form-control" required minlength="6"></div>
+    </div>
+    <button class="btn btn-primary mt-3"><i class="fa-solid fa-key me-1"></i> Ubah Password</button>
+  </form>
+</div>
+
 <div class="modal fade" id="modalUser" tabindex="-1">
   <div class="modal-dialog">
     <form class="modal-content" method="POST">
@@ -198,18 +209,6 @@ function editUserMode(data){
 }
 </script>
 
-<?php elseif ($tab == 'pengaturan'): ?>
-<div class="card dash-card p-4">
-  <h6 class="fw-bold mb-3"><i class="fa-solid fa-lock me-1"></i> Ubah Password Admin</h6>
-  <form method="POST">
-    <div class="row g-3">
-      <div class="col-md-4"><label class="form-label">Password Lama</label><input type="password" name="password_lama" class="form-control" required></div>
-      <div class="col-md-4"><label class="form-label">Password Baru</label><input type="password" name="password_baru" class="form-control" required minlength="6"></div>
-      <div class="col-md-4"><label class="form-label">Konfirmasi Password</label><input type="password" name="konfirmasi_password" class="form-control" required minlength="6"></div>
-    </div>
-    <button class="btn btn-primary mt-3"><i class="fa-solid fa-key me-1"></i> Ubah Password</button>
-  </form>
-</div>
 <?php endif; ?>
 
 <?php include 'includes/footer.php'; ?>

@@ -417,3 +417,30 @@ section {
   overflow: hidden;
   box-shadow: 0 20px 50px rgba(0, 0, 0, .3);
 }
+
+/* Konten berita hasil rich text editor */
+.berita-content h2, .berita-content h3 { color: var(--primary-dark); font-weight: 700; margin-top: 1rem; }
+.berita-content p { margin-bottom: 1rem; }
+.berita-content ul, .berita-content ol { margin-bottom: 1rem; padding-left: 1.5rem; }
+.berita-content blockquote {
+  border-left: 4px solid var(--primary);
+  background: #f4f7fc;
+  padding: .75rem 1.25rem;
+  margin: 1rem 0;
+  color: #444;
+  font-style: italic;
+  border-radius: 0 8px 8px 0;
+}
+.berita-content a { color: var(--primary); text-decoration: underline; }
+
+/* Kartu pengumuman */
+.pengumuman-card {
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 4px 18px rgba(11, 61, 145, .07);
+  transition: transform .2s ease, box-shadow .2s ease;
+}
+.pengumuman-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 28px rgba(11, 61, 145, .12);
+}

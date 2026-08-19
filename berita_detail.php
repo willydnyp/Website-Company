@@ -44,7 +44,13 @@ include 'includes/header.php';
           <?php endif; ?>
         </p>
         <h2 class="section-title mb-3"><?= htmlspecialchars($berita['judul']) ?></h2>
-        <div class="fs-6" style="line-height:1.9;"><?= nl2br(htmlspecialchars($berita['isi'])) ?></div>
+        <?php
+          // Berita lama tersimpan sebagai teks polos, berita baru (dari editor) tersimpan sebagai HTML.
+          $isiBerita = strip_tags($berita['isi']) === $berita['isi']
+            ? nl2br(htmlspecialchars($berita['isi']))
+            : $berita['isi'];
+        ?>
+        <div class="fs-6 berita-content" style="line-height:1.9;"><?= $isiBerita ?></div>
         <a href="berita.php" class="btn btn-outline-primary rounded-pill px-4 mt-4"><i class="fa-solid fa-arrow-left me-1"></i> Kembali ke Berita</a>
       </div>
 
