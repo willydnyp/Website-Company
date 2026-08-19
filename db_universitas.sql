@@ -199,21 +199,6 @@ INSERT INTO `pengunjung` (`id`, `ip_address`, `tanggal`) VALUES
 -- --------------------------------------------------------
 
 --
--- Table structure for table `pengumuman`
---
-
-CREATE TABLE `pengumuman` (
-  `id` int(11) NOT NULL,
-  `judul` varchar(200) NOT NULL,
-  `isi` text NOT NULL,
-  `kategori` varchar(50) NOT NULL DEFAULT 'Umum',
-  `tanggal` date DEFAULT NULL,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
 -- Table structure for table `program_studi`
 --
 
@@ -307,12 +292,6 @@ ALTER TABLE `mahasiswa`
   ADD KEY `prodi_id` (`prodi_id`);
 
 --
--- Indexes for table `pengumuman`
---
-ALTER TABLE `pengumuman`
-  ADD PRIMARY KEY (`id`);
-
---
 -- Indexes for table `pengunjung`
 --
 ALTER TABLE `pengunjung`
@@ -371,12 +350,6 @@ ALTER TABLE `kontak`
 --
 ALTER TABLE `mahasiswa`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
-
---
--- AUTO_INCREMENT for table `pengumuman`
---
-ALTER TABLE `pengumuman`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;
 
 --
 -- AUTO_INCREMENT for table `pengunjung`

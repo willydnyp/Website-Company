@@ -4,9 +4,9 @@ require_once '../includes/functions.php';
 requireLogin();
 
 $modul = $_GET['modul'] ?? 'fakultas';
-if (!in_array($modul, ['fakultas','galeri','berita','pengumuman'])) $modul = 'fakultas';
+if (!in_array($modul, ['fakultas','galeri','berita'])) $modul = 'fakultas';
 $active_menu = $modul;
-$judulModul = ['fakultas'=>'Fakultas','galeri'=>'Galeri','berita'=>'Berita','pengumuman'=>'Pengumuman'];
+$judulModul = ['fakultas'=>'Fakultas','galeri'=>'Galeri','berita'=>'Berita'];
 $page_title = $judulModul[$modul];
 
 // hapus data
@@ -54,17 +54,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } else {
             mysqli_query($koneksi, "INSERT INTO berita (judul, isi, foto, penulis, tanggal) VALUES ('$judul','$isi','$foto','$penulis','$tanggal')");
         }
-    } elseif ($modul == 'pengumuman') {
-        $judul = clean($koneksi, $_POST['judul']);
-        $isi = clean($koneksi, $_POST['isi']);
-        $kategori = clean($koneksi, $_POST['kategori']);
-        $tanggal = clean($koneksi, $_POST['tanggal']);
-        if ($tanggal === '') $tanggal = date('Y-m-d');
-        if ($id > 0) {
-            mysqli_query($koneksi, "UPDATE pengumuman SET judul='$judul', isi='$isi', kategori='$kategori', tanggal='$tanggal' WHERE id=$id");
-        } else {
-            mysqli_query($koneksi, "INSERT INTO pengumuman (judul, isi, kategori, tanggal) VALUES ('$judul','$isi','$kategori','$tanggal')");
-        }
     }
     header("Location: data.php?modul=$modul&success=Data+berhasil+disimpan");
     exit;
@@ -90,11 +79,6 @@ switch ($modul) {
         $where = $cari ? "WHERE judul LIKE '%$cari%' OR penulis LIKE '%$cari%'" : '';
         $total = mysqli_fetch_assoc(mysqli_query($koneksi, "SELECT COUNT(*) c FROM berita $where"))['c'];
         $data = mysqli_query($koneksi, "SELECT * FROM berita $where ORDER BY tanggal DESC, id DESC LIMIT $perHalaman OFFSET $offset");
-        break;
-    case 'pengumuman':
-        $where = $cari ? "WHERE judul LIKE '%$cari%' OR kategori LIKE '%$cari%'" : '';
-        $total = mysqli_fetch_assoc(mysqli_query($koneksi, "SELECT COUNT(*) c FROM pengumuman $where"))['c'];
-        $data = mysqli_query($koneksi, "SELECT * FROM pengumuman $where ORDER BY tanggal DESC, id DESC LIMIT $perHalaman OFFSET $offset");
         break;
 }
 $totalHalaman = ceil($total / $perHalaman);
@@ -128,7 +112,6 @@ include 'includes/layout.php';
         <?php if ($modul=='fakultas'): ?><th>#</th><th>Foto</th><th>Nama Fakultas</th><th>Dekan</th><th>Deskripsi</th><th>Aksi</th>
         <?php elseif ($modul=='galeri'): ?><th>#</th><th>Foto</th><th>Judul</th><th>Kategori</th><th>Aksi</th>
         <?php elseif ($modul=='berita'): ?><th>#</th><th>Foto</th><th>Judul</th><th>Penulis</th><th>Tanggal</th><th>Aksi</th>
-        <?php elseif ($modul=='pengumuman'): ?><th>#</th><th>Judul</th><th>Kategori</th><th>Tanggal</th><th>Aksi</th>
         <?php endif; ?>
         </tr>
       </thead>
@@ -180,13 +163,6 @@ include 'includes/layout.php';
           <td><?= htmlspecialchars(formatTanggalIndo($row['tanggal'])) ?></td>
           <td><button class="btn btn-sm btn-warning" onclick='editMode(<?= json_encode($row) ?>)'><i class="fa-solid fa-pen"></i></button>
               <button class="btn btn-sm btn-danger" onclick="confirmDelete('data.php?modul=berita&hapus=<?= $row['id'] ?>')"><i class="fa-solid fa-trash"></i></button></td>
-        <?php elseif ($modul=='pengumuman'): ?>
-          <td><?= $no++ ?></td>
-          <td><?= htmlspecialchars(mb_strimwidth($row['judul'],0,60,'...')) ?></td>
-          <td><span class="badge bg-info text-dark"><?= htmlspecialchars($row['kategori']) ?></span></td>
-          <td><?= htmlspecialchars(formatTanggalIndo($row['tanggal'])) ?></td>
-          <td><button class="btn btn-sm btn-warning" onclick='editMode(<?= json_encode($row) ?>)'><i class="fa-solid fa-pen"></i></button>
-              <button class="btn btn-sm btn-danger" onclick="confirmDelete('data.php?modul=pengumuman&hapus=<?= $row['id'] ?>')"><i class="fa-solid fa-trash"></i></button></td>
         <?php endif; ?>
         </tr>
       <?php endwhile; ?>
@@ -286,21 +262,6 @@ include 'includes/layout.php';
             </div>
           </div>
 
-        <?php elseif ($modul=='pengumuman'): ?>
-          <div class="mb-3"><label class="form-label">Judul</label><input type="text" name="judul" id="f_judul" class="form-control" required></div>
-          <div class="mb-3"><label class="form-label">Isi Pengumuman</label><textarea name="isi" id="f_isi" class="form-control" rows="4" required></textarea></div>
-          <div class="row">
-            <div class="col-md-6 mb-3">
-              <label class="form-label">Kategori</label>
-              <select name="kategori" id="f_kategori" class="form-select">
-                <option value="Umum">Umum</option>
-                <option value="Akademik">Akademik</option>
-                <option value="Kemahasiswaan">Kemahasiswaan</option>
-                <option value="Beasiswa">Beasiswa</option>
-              </select>
-            </div>
-            <div class="col-md-6 mb-3"><label class="form-label">Tanggal</label><input type="date" name="tanggal" id="f_tanggal" class="form-control"></div>
-          </div>
         <?php endif; ?>
 
       </div>
@@ -369,11 +330,6 @@ function editMode(data){
     document.getElementById('f_isi').value = data.isi || '';
     if (quill) quill.root.innerHTML = data.isi || '';
     document.getElementById('f_penulis').value = data.penulis || '';
-    document.getElementById('f_tanggal').value = data.tanggal || '';
-  } else if (MODUL === 'pengumuman') {
-    document.getElementById('f_judul').value = data.judul;
-    document.getElementById('f_isi').value = data.isi;
-    document.getElementById('f_kategori').value = data.kategori || 'Umum';
     document.getElementById('f_tanggal').value = data.tanggal || '';
   }
 
