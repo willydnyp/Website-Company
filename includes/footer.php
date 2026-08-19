@@ -10,6 +10,7 @@
         <ul class="list-unstyled footer-links">
           <li><a href="<?= BASE_URL ?>tentang.php">Tentang Kami</a></li>
           <li><a href="<?= BASE_URL ?>fakultas.php">Fakultas</a></li>
+          <li><a href="<?= BASE_URL ?>berita.php">Berita</a></li>
         </ul>
       </div>
       <div class="col-lg-3 col-md-6">

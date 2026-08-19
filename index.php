@@ -15,6 +15,7 @@ $totalFakultas = mysqli_fetch_assoc(mysqli_query($koneksi, "SELECT COUNT(*) c FR
 $fakultasList = mysqli_query($koneksi, "SELECT * FROM fakultas LIMIT 4");
 $totalFakultasRow = mysqli_num_rows($fakultasList);
 $galeriList = mysqli_query($koneksi, "SELECT * FROM galeri ORDER BY id DESC LIMIT 6");
+$beritaList = mysqli_query($koneksi, "SELECT * FROM berita ORDER BY tanggal DESC, id DESC LIMIT 3");
 
 include 'includes/header.php';
 ?>
@@ -76,6 +77,36 @@ include 'includes/header.php';
       </div>
       <?php endwhile; ?>
     </div>
+  </div>
+</section>
+
+<section>
+  <div class="container text-center mb-5">
+    <h6 class="text-primary fw-bold text-uppercase">Informasi</h6>
+    <h2 class="section-title">Berita Terbaru</h2>
+  </div>
+  <div class="container">
+    <div class="row g-4">
+      <?php if (mysqli_num_rows($beritaList) === 0): ?>
+        <div class="col-12 text-center text-muted">Belum ada berita yang dipublikasikan.</div>
+      <?php endif; ?>
+      <?php while ($b = mysqli_fetch_assoc($beritaList)):
+        $fotoSrc = fotoUrl($b['foto']) ?: 'assets/img/logo.png';
+      ?>
+      <div class="col-md-6 col-lg-4">
+        <div class="card-custom h-100 d-flex flex-column">
+          <img src="<?= htmlspecialchars($fotoSrc) ?>" alt="<?= htmlspecialchars($b['judul']) ?>" style="height:200px;object-fit:cover;">
+          <div class="p-3 d-flex flex-column flex-grow-1">
+            <p class="small text-muted mb-1"><i class="fa-regular fa-calendar me-1"></i><?= htmlspecialchars(formatTanggalIndo($b['tanggal'])) ?></p>
+            <h6 class="fw-bold"><?= htmlspecialchars($b['judul']) ?></h6>
+            <p class="small text-muted mb-3"><?= htmlspecialchars(mb_strimwidth(strip_tags($b['isi']), 0, 100, '...')) ?></p>
+            <a href="berita_detail.php?id=<?= $b['id'] ?>" class="small mt-auto">Baca Selengkapnya <i class="fa-solid fa-arrow-right"></i></a>
+          </div>
+        </div>
+      </div>
+      <?php endwhile; ?>
+    </div>
+    <div class="text-center mt-4"><a href="berita.php" class="btn btn-primary rounded-pill px-4">Lihat Semua Berita</a></div>
   </div>
 </section>
 

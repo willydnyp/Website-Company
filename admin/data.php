@@ -4,7 +4,7 @@ require_once '../includes/functions.php';
 requireLogin();
 
 $modul = $_GET['modul'] ?? 'fakultas';
-if (!in_array($modul, ['fakultas','galeri'])) $modul = 'fakultas';
+if (!in_array($modul, ['fakultas','galeri','berita'])) $modul = 'fakultas';
 $active_menu = $modul;
 $page_title = ucfirst($modul);
 
@@ -41,6 +41,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } else {
             mysqli_query($koneksi, "INSERT INTO galeri (judul, foto, kategori) VALUES ('$judul','$foto','$kategori')");
         }
+    } elseif ($modul == 'berita') {
+        $judul = clean($koneksi, $_POST['judul']);
+        $isi = clean($koneksi, $_POST['isi']);
+        $penulis = clean($koneksi, $_POST['penulis']);
+        $tanggal = clean($koneksi, $_POST['tanggal']);
+        if ($tanggal === '') $tanggal = date('Y-m-d');
+        if ($id > 0) {
+            $set = "judul='$judul', isi='$isi', penulis='$penulis', tanggal='$tanggal'" . ($foto !== '' ? ", foto='$foto'" : '');
+            mysqli_query($koneksi, "UPDATE berita SET $set WHERE id=$id");
+        } else {
+            mysqli_query($koneksi, "INSERT INTO berita (judul, isi, foto, penulis, tanggal) VALUES ('$judul','$isi','$foto','$penulis','$tanggal')");
+        }
     }
     header("Location: data.php?modul=$modul&success=Data+berhasil+disimpan");
     exit;
@@ -61,6 +73,11 @@ switch ($modul) {
         $where = $cari ? "WHERE judul LIKE '%$cari%'" : '';
         $total = mysqli_fetch_assoc(mysqli_query($koneksi, "SELECT COUNT(*) c FROM galeri $where"))['c'];
         $data = mysqli_query($koneksi, "SELECT * FROM galeri $where ORDER BY id DESC LIMIT $perHalaman OFFSET $offset");
+        break;
+    case 'berita':
+        $where = $cari ? "WHERE judul LIKE '%$cari%' OR penulis LIKE '%$cari%'" : '';
+        $total = mysqli_fetch_assoc(mysqli_query($koneksi, "SELECT COUNT(*) c FROM berita $where"))['c'];
+        $data = mysqli_query($koneksi, "SELECT * FROM berita $where ORDER BY tanggal DESC, id DESC LIMIT $perHalaman OFFSET $offset");
         break;
 }
 $totalHalaman = ceil($total / $perHalaman);
@@ -84,6 +101,7 @@ include 'includes/layout.php';
         <tr>
         <?php if ($modul=='fakultas'): ?><th>#</th><th>Foto</th><th>Nama Fakultas</th><th>Dekan</th><th>Deskripsi</th><th>Aksi</th>
         <?php elseif ($modul=='galeri'): ?><th>#</th><th>Foto</th><th>Judul</th><th>Kategori</th><th>Aksi</th>
+        <?php elseif ($modul=='berita'): ?><th>#</th><th>Foto</th><th>Judul</th><th>Penulis</th><th>Tanggal</th><th>Aksi</th>
         <?php endif; ?>
         </tr>
       </thead>
@@ -119,6 +137,22 @@ include 'includes/layout.php';
           <td><?= htmlspecialchars($row['judul']) ?></td><td><?= htmlspecialchars($row['kategori']) ?></td>
           <td><button class="btn btn-sm btn-warning" onclick='editMode(<?= json_encode($row) ?>)'><i class="fa-solid fa-pen"></i></button>
               <button class="btn btn-sm btn-danger" onclick="confirmDelete('data.php?modul=galeri&hapus=<?= $row['id'] ?>')"><i class="fa-solid fa-trash"></i></button></td>
+        <?php elseif ($modul=='berita'):
+          $thumbAsli = fotoUrl($row['foto'], '../');
+        ?>
+          <td><?= $no++ ?></td>
+          <td class="position-relative" style="width:70px;">
+            <?php if ($thumbAsli): ?>
+              <img src="<?= htmlspecialchars($thumbAsli) ?>" class="thumb-foto">
+            <?php else: ?>
+              <div class="thumb-foto d-flex align-items-center justify-content-center bg-light text-muted"><i class="fa-solid fa-image"></i></div>
+            <?php endif; ?>
+          </td>
+          <td><?= htmlspecialchars(mb_strimwidth($row['judul'],0,50,'...')) ?></td>
+          <td><?= htmlspecialchars($row['penulis']) ?></td>
+          <td><?= htmlspecialchars(formatTanggalIndo($row['tanggal'])) ?></td>
+          <td><button class="btn btn-sm btn-warning" onclick='editMode(<?= json_encode($row) ?>)'><i class="fa-solid fa-pen"></i></button>
+              <button class="btn btn-sm btn-danger" onclick="confirmDelete('data.php?modul=berita&hapus=<?= $row['id'] ?>')"><i class="fa-solid fa-trash"></i></button></td>
         <?php endif; ?>
         </tr>
       <?php endwhile; ?>
@@ -165,6 +199,21 @@ include 'includes/layout.php';
               <img id="f_foto_preview" src="" class="foto-preview">
             </div>
           </div>
+
+        <?php elseif ($modul=='berita'): ?>
+          <div class="mb-3"><label class="form-label">Judul</label><input type="text" name="judul" id="f_judul" class="form-control" required></div>
+          <div class="mb-3"><label class="form-label">Isi Berita</label><textarea name="isi" id="f_isi" class="form-control" rows="5" required></textarea></div>
+          <div class="row">
+            <div class="col-md-6 mb-3"><label class="form-label">Penulis</label><input type="text" name="penulis" id="f_penulis" class="form-control"></div>
+            <div class="col-md-6 mb-3"><label class="form-label">Tanggal</label><input type="date" name="tanggal" id="f_tanggal" class="form-control"></div>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Foto</label>
+            <input type="text" name="foto" id="f_foto" class="form-control">
+            <div id="f_foto_preview_wrap" class="foto-preview-wrap">
+              <img id="f_foto_preview" src="" class="foto-preview">
+            </div>
+          </div>
         <?php endif; ?>
 
       </div>
@@ -197,7 +246,7 @@ document.getElementById('f_foto')?.addEventListener('input', e => togglePreview(
 function tambahMode(){
   document.getElementById('modalTitle').innerText = 'Tambah Data';
   document.getElementById('f_id').value = '';
-  document.querySelectorAll('#modalForm input[type=text], #modalForm textarea').forEach(el => el.value = '');
+  document.querySelectorAll('#modalForm input[type=text], #modalForm input[type=date], #modalForm textarea').forEach(el => el.value = '');
   togglePreview('');
 }
 
@@ -212,6 +261,11 @@ function editMode(data){
   } else if (MODUL === 'galeri') {
     document.getElementById('f_judul').value = data.judul;
     document.getElementById('f_kategori').value = data.kategori;
+  } else if (MODUL === 'berita') {
+    document.getElementById('f_judul').value = data.judul;
+    document.getElementById('f_isi').value = data.isi;
+    document.getElementById('f_penulis').value = data.penulis || '';
+    document.getElementById('f_tanggal').value = data.tanggal || '';
   }
 
   document.getElementById('f_foto').value = data.foto || '';

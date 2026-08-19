@@ -17,6 +17,7 @@
     <li class="nav-item"><a class="nav-link <?= $active_menu=='dashboard'?'active':'' ?>" href="dashboard.php"><i class="fa-solid fa-gauge me-2"></i>Dashboard</a></li>
     <li class="nav-item"><a class="nav-link <?= $active_menu=='profil'?'active':'' ?>" href="settings.php?tab=profil"><i class="fa-solid fa-building-columns me-2"></i>Profil Universitas</a></li>
     <li class="nav-item"><a class="nav-link <?= $active_menu=='fakultas'?'active':'' ?>" href="data.php?modul=fakultas"><i class="fa-solid fa-landmark me-2"></i>Fakultas</a></li>
+    <li class="nav-item"><a class="nav-link <?= $active_menu=='berita'?'active':'' ?>" href="data.php?modul=berita"><i class="fa-solid fa-newspaper me-2"></i>Berita</a></li>
     <li class="nav-item"><a class="nav-link <?= $active_menu=='galeri'?'active':'' ?>" href="data.php?modul=galeri"><i class="fa-solid fa-images me-2"></i>Galeri</a></li>
     <li class="nav-item"><a class="nav-link <?= $active_menu=='pesan'?'active':'' ?>" href="settings.php?tab=pesan"><i class="fa-solid fa-envelope me-2"></i>Pesan Masuk</a></li>
     <li class="nav-item"><a class="nav-link <?= $active_menu=='users'?'active':'' ?>" href="settings.php?tab=users"><i class="fa-solid fa-users-gear me-2"></i>Pengguna/Admin</a></li>

@@ -25,6 +25,7 @@
         <li class="nav-item"><a class="nav-link <?= $active=='beranda'?'active':'' ?>" href="<?= BASE_URL ?>index.php">Beranda</a></li>
         <li class="nav-item"><a class="nav-link <?= $active=='tentang'?'active':'' ?>" href="<?= BASE_URL ?>tentang.php">Tentang Kami</a></li>
         <li class="nav-item"><a class="nav-link <?= $active=='fakultas'?'active':'' ?>" href="<?= BASE_URL ?>fakultas.php">Fakultas</a></li>
+        <li class="nav-item"><a class="nav-link <?= $active=='berita'?'active':'' ?>" href="<?= BASE_URL ?>berita.php">Berita</a></li>
         <li class="nav-item"><a class="nav-link <?= $active=='galeri'?'active':'' ?>" href="<?= BASE_URL ?>galeri.php">Galeri</a></li>
         <li class="nav-item"><a class="nav-link <?= $active=='kontak'?'active':'' ?>" href="<?= BASE_URL ?>kontak.php">Hubungi Kami</a></li>
         <li class="nav-item ms-lg-1">

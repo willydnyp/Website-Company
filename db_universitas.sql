@@ -23,6 +23,31 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `berita`
+--
+
+CREATE TABLE `berita` (
+  `id` int(11) NOT NULL,
+  `judul` varchar(200) NOT NULL,
+  `isi` text NOT NULL,
+  `foto` varchar(255) DEFAULT NULL,
+  `penulis` varchar(100) DEFAULT NULL,
+  `tanggal` date DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `berita`
+--
+
+INSERT INTO `berita` (`id`, `judul`, `isi`, `foto`, `penulis`, `tanggal`, `created_at`) VALUES
+(1, 'Penerimaan Mahasiswa Baru Tahun Akademik 2026/2027 Resmi Dibuka', 'Universitas YPIB Majalengka dengan bangga mengumumkan pembukaan pendaftaran mahasiswa baru untuk tahun akademik 2026/2027. Pendaftaran dapat dilakukan secara online melalui website resmi kampus maupun langsung datang ke kampus. Calon mahasiswa dapat memilih dari berbagai program studi unggulan yang tersedia di empat fakultas.', 'default-berita.jpg', 'Humas Kampus', '2026-08-01', '2026-08-19 04:00:00'),
+(2, 'Wisuda Angkatan XV Berlangsung Khidmat', 'Universitas YPIB Majalengka menggelar upacara wisuda bagi ratusan lulusan dari berbagai program studi. Acara berlangsung khidmat dan dihadiri oleh keluarga besar wisudawan serta jajaran pimpinan universitas. Rektor berpesan agar para lulusan terus mengembangkan diri dan berkontribusi bagi masyarakat.', 'default-berita.jpg', 'Humas Kampus', '2026-07-20', '2026-08-19 04:00:00'),
+(3, 'Seminar Nasional Teknologi dan Inovasi Digital 2026', 'Fakultas Ilmu Komputer menyelenggarakan seminar nasional bertema teknologi dan inovasi digital yang menghadirkan pembicara dari kalangan akademisi dan praktisi industri. Kegiatan ini bertujuan untuk membekali mahasiswa dengan wawasan terkini seputar perkembangan teknologi informasi.', 'default-berita.jpg', 'Admin', '2026-07-05', '2026-08-19 04:00:00');
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `dosen`
 --
 
@@ -227,6 +252,12 @@ INSERT INTO `users` (`id`, `username`, `password`, `nama`, `role`, `created_at`)
 --
 
 --
+-- Indexes for table `berita`
+--
+ALTER TABLE `berita`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `dosen`
 --
 ALTER TABLE `dosen`
@@ -283,6 +314,12 @@ ALTER TABLE `users`
 --
 -- AUTO_INCREMENT for dumped tables
 --
+
+--
+-- AUTO_INCREMENT for table `berita`
+--
+ALTER TABLE `berita`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `dosen`
