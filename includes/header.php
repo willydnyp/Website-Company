@@ -28,6 +28,7 @@
         <li class="nav-item"><a class="nav-link <?= $active=='berita'?'active':'' ?>" href="<?= BASE_URL ?>berita.php">Berita</a></li>
         <li class="nav-item"><a class="nav-link <?= $active=='galeri'?'active':'' ?>" href="<?= BASE_URL ?>galeri.php">Galeri</a></li>
         <li class="nav-item"><a class="nav-link <?= $active=='kontak'?'active':'' ?>" href="<?= BASE_URL ?>kontak.php">Hubungi Kami</a></li>
+        <li class="nav-item"><a class="nav-link <?= $active=='profil'?'active':'' ?>" href="<?= BASE_URL ?>profil.php">Profil</a></li>
         <li class="nav-item ms-lg-1">
           <a class="btn btn-light btn-sm px-3 fw-semibold" href="<?= BASE_URL ?><?= isLoggedIn() ? 'admin/dashboard.php' : 'login.php' ?>">
             <i class="fa-solid fa-right-to-bracket me-1"></i><?= isLoggedIn() ? 'Dashboard' : 'Login' ?>

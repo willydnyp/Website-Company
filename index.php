@@ -44,7 +44,7 @@ include 'includes/header.php';
       <div class="col-lg-8">
         <h6 class="text-uppercase fw-bold text-warning">Sambutan Rektor</h6>
         <h2 class="section-title mb-3">Selamat Datang</h2>
-        <p class="fst-italic">"<?= nl2br(htmlspecialchars($profil['sambutan_rektor'])) ?>"</p>
+        <p class="fst-italic" style="text-align:justify;">"<?= nl2br(htmlspecialchars($profil['sambutan_rektor'])) ?>"</p>
         <p class="fw-bold mb-0"><?= htmlspecialchars($profil['nama_rektor']) ?></p>
         <p class="text-muted small">Rektor <?= htmlspecialchars($profil['nama_universitas']) ?></p>
       </div>
