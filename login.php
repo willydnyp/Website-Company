@@ -69,6 +69,7 @@ include 'includes/header.php';
               </button>
             </form>
             <div class="text-center mt-4"><a href="index.php" class="small text-muted"><i class="fa-solid fa-arrow-left me-1"></i> Kembali ke Beranda</a></div>
+            <p class="text-center small text-muted mt-3 mb-0">Default: admin / admin123</p>
           </div>
         </div>
       </div>
